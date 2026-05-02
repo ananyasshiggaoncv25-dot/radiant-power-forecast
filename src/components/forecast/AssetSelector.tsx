@@ -11,22 +11,23 @@ interface Props {
   assets?: Asset[];
 }
 
-export const AssetSelector = ({ selectedId, onSelect, filter, onFilterChange, assets }: Props) => {
+export const AssetSelector = ({
+  selectedId,
+  onSelect,
+  filter,
+  onFilterChange,
+  assets,
+}: Props) => {
   const source = assets ?? ASSETS;
   const filtered = source.filter((a) => filter === "all" || a.type === filter);
-  return (
-    <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-display text-base font-semibold">Assets &amp; Clusters</h3>
-        <span className="text-xs text-muted-foreground tabular">{filtered.length} active</span>
-      </div>
-      <div className="flex gap-1 p-1 bg-secondary rounded-xl mb-4">
 
   return (
     <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-display text-base font-semibold">Assets & Clusters</h3>
-        <span className="text-xs text-muted-foreground tabular">{filtered.length} active</span>
+        <h3 className="font-display text-base font-semibold">Assets &amp; Clusters</h3>
+        <span className="text-xs text-muted-foreground tabular">
+          {filtered.length} active
+        </span>
       </div>
       <div className="flex gap-1 p-1 bg-secondary rounded-xl mb-4">
         {(["all", "solar", "wind"] as const).map((f) => (
@@ -45,15 +46,33 @@ export const AssetSelector = ({ selectedId, onSelect, filter, onFilterChange, as
         ))}
       </div>
       <div className="space-y-1.5 max-h-[420px] overflow-y-auto -mr-2 pr-2">
+        {filtered.length === 0 && (
+          <div className="text-xs text-muted-foreground px-3 py-6 text-center">
+            No matching plants in this district.
+          </div>
+        )}
         {filtered.map((a) => (
-          <AssetRow key={a.id} asset={a} active={a.id === selectedId} onClick={() => onSelect(a.id)} />
+          <AssetRow
+            key={a.id}
+            asset={a}
+            active={a.id === selectedId}
+            onClick={() => onSelect(a.id)}
+          />
         ))}
       </div>
     </div>
   );
 };
 
-const AssetRow = ({ asset, active, onClick }: { asset: Asset; active: boolean; onClick: () => void }) => {
+const AssetRow = ({
+  asset,
+  active,
+  onClick,
+}: {
+  asset: Asset;
+  active: boolean;
+  onClick: () => void;
+}) => {
   const Icon = asset.type === "solar" ? Sun : Wind;
   return (
     <button
