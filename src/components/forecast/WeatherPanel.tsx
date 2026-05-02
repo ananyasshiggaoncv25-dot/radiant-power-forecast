@@ -37,7 +37,7 @@ export const WeatherPanel = ({ asset }: Props) => {
         ))}
       </div>
       <div className="mt-4 pt-4 border-t border-border text-xs text-muted-foreground leading-relaxed">
-        Numerical weather prediction blended from ECMWF + GFS, downscaled to plant coordinates.
+        IMD station data blended with ECMWF forecasts, downscaled to plant coordinates in Karnataka.
       </div>
     </div>
   );
