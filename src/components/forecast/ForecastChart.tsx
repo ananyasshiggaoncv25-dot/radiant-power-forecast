@@ -9,6 +9,7 @@ import {
   YAxis,
 } from "recharts";
 import type { ForecastPoint, AssetType } from "@/lib/forecast-data";
+import { useI18n } from "@/lib/i18n";
 
 interface Props {
   data: ForecastPoint[];
@@ -19,6 +20,7 @@ interface Props {
 const accentVar = (type: AssetType) => (type === "solar" ? "var(--solar)" : "var(--wind)");
 
 export const ForecastChart = ({ data, assetType, capacity }: Props) => {
+  const { t } = useI18n();
   const accent = `hsl(${accentVar(assetType)})`;
   const accentSoft = `hsl(${accentVar(assetType)} / 0.18)`;
   const accentMid = `hsl(${accentVar(assetType)} / 0.42)`;
@@ -66,20 +68,20 @@ export const ForecastChart = ({ data, assetType, capacity }: Props) => {
                 <div className="rounded-xl border border-border bg-card/95 backdrop-blur-md shadow-elevated px-4 py-3 text-xs">
                   <div className="font-display text-sm font-semibold mb-2">{label}</div>
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1 tabular">
-                    <span className="text-muted-foreground">P50 forecast</span>
+                    <span className="text-muted-foreground">{t("chart.tooltip.p50")}</span>
                     <span className="font-medium text-right">{p.p50} MW</span>
-                    <span className="text-muted-foreground">P10 — P90</span>
+                    <span className="text-muted-foreground">{t("chart.tooltip.band")}</span>
                     <span className="font-medium text-right">
                       {p.p10} – {p.p90}
                     </span>
                     {p.actual !== undefined && (
                       <>
-                        <span className="text-muted-foreground">Actual</span>
+                        <span className="text-muted-foreground">{t("chart.tooltip.actual")}</span>
                         <span className="font-medium text-right text-success">{p.actual} MW</span>
                       </>
                     )}
                     <span className="text-muted-foreground">
-                      {assetType === "solar" ? "Irradiance" : "Wind speed"}
+                      {assetType === "solar" ? t("chart.tooltip.irradiance") : t("chart.tooltip.windSpeed")}
                     </span>
                     <span className="font-medium text-right">
                       {p.weather} {assetType === "solar" ? "W/m²" : "m/s"}
@@ -132,9 +134,9 @@ export const ForecastChart = ({ data, assetType, capacity }: Props) => {
         </AreaChart>
       </ResponsiveContainer>
       <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
-        <LegendDot color={accent} label="P50 (median forecast)" />
-        <LegendDot color={accentSoft} label="P10 – P90 uncertainty" square />
-        <LegendDot color="hsl(var(--foreground))" label="Actual" dashed />
+        <LegendDot color={accent} label={t("chart.legend.p50")} />
+        <LegendDot color={accentSoft} label={t("chart.legend.band")} square />
+        <LegendDot color="hsl(var(--foreground))" label={t("chart.legend.actual")} dashed />
       </div>
     </div>
   );
