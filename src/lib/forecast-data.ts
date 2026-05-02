@@ -26,12 +26,12 @@ export interface Asset {
 }
 
 export const ASSETS: Asset[] = [
-  { id: "sol-iberia-01", name: "Iberia Solar Park", type: "solar", capacity: 320, region: "Iberia", cluster: "Iberia Solar Cluster", lat: 38.9, lng: -4.1 },
-  { id: "sol-rajasthan-02", name: "Rajasthan PV Field", type: "solar", capacity: 480, region: "South Asia", cluster: "Thar Solar Cluster", lat: 27.0, lng: 71.0 },
-  { id: "sol-atacama-03", name: "Atacama Heliostat", type: "solar", capacity: 210, region: "South America", cluster: "Andes Solar Cluster", lat: -23.6, lng: -68.2 },
-  { id: "win-northsea-01", name: "North Sea Offshore", type: "wind", capacity: 540, region: "North Europe", cluster: "North Sea Cluster", lat: 56.1, lng: 3.5 },
-  { id: "win-texas-02", name: "West Texas Wind Farm", type: "wind", capacity: 410, region: "North America", cluster: "Permian Wind Cluster", lat: 31.8, lng: -102.4 },
-  { id: "win-patagonia-03", name: "Patagonia Ridge", type: "wind", capacity: 280, region: "South America", cluster: "Patagonia Wind Cluster", lat: -50.0, lng: -69.5 },
+  { id: "sol-pavagada-01", name: "Pavagada Solar Park", type: "solar", capacity: 2050, region: "Tumakuru, Karnataka", cluster: "Pavagada Solar Cluster", lat: 14.10, lng: 77.28 },
+  { id: "sol-kalaburagi-02", name: "Kalaburagi PV Field", type: "solar", capacity: 320, region: "Kalaburagi, Karnataka", cluster: "North Karnataka Solar Cluster", lat: 17.33, lng: 76.83 },
+  { id: "sol-koppal-03", name: "Koppal Solar Plant", type: "solar", capacity: 280, region: "Koppal, Karnataka", cluster: "North Karnataka Solar Cluster", lat: 15.35, lng: 76.15 },
+  { id: "win-chitradurga-01", name: "Chitradurga Wind Farm", type: "wind", capacity: 410, region: "Chitradurga, Karnataka", cluster: "Chitradurga Wind Cluster", lat: 14.23, lng: 76.40 },
+  { id: "win-gadag-02", name: "Kappatagudda Wind Farm", type: "wind", capacity: 260, region: "Gadag, Karnataka", cluster: "Gadag Wind Cluster", lat: 15.43, lng: 75.63 },
+  { id: "win-bellary-03", name: "Sandur Ridge Wind", type: "wind", capacity: 180, region: "Ballari, Karnataka", cluster: "Bellary Wind Cluster", lat: 15.10, lng: 76.55 },
 ];
 
 // Deterministic pseudo-random for stable mock data
