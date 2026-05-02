@@ -156,19 +156,16 @@ const Index = () => {
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full bg-primary/8 text-primary border border-primary/15 mb-4">
                 <Sparkles className="h-3.5 w-3.5" />
-                <span>Unified model · solar + wind · Karnataka grid</span>
+                <span>{t("hero.badge")}</span>
               </div>
               <h1 className="font-display text-4xl lg:text-5xl font-semibold leading-[1.05] tracking-tight">
-                Forecast every megawatt
+                {t("hero.title1")}
                 <span className="block text-muted-foreground font-normal italic">
-                  with calibrated uncertainty.
+                  {t("hero.title2")}
                 </span>
               </h1>
               <p className="mt-4 text-base text-muted-foreground leading-relaxed max-w-xl">
-                Day-ahead, intra-day and hourly probabilistic predictions for solar and wind
-                plants across Karnataka — trained on IMD &amp; ECMWF weather data and KPTCL
-                operational telemetry, generalising from Pavagada to Chitradurga without
-                per-site retraining.
+                {t("hero.subtitle")}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -181,7 +178,7 @@ const Index = () => {
                 intervalMs={REFRESH_INTERVAL_MS}
               />
               <button className="px-4 py-2.5 text-sm font-medium rounded-xl bg-gradient-hero text-primary-foreground shadow-elevated hover:shadow-glow transition-all">
-                Run new prediction
+                {t("hero.runPrediction")}
               </button>
             </div>
           </div>
@@ -195,11 +192,11 @@ const Index = () => {
         {/* KPIs */}
         <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <KpiCard
-            label="Forecast accuracy"
+            label={t("kpi.accuracy")}
             value={stats.accuracy.toFixed(1)}
             unit="%"
-            badge={{ text: "24h MAPE", tone: "success" }}
-            hint={`MAE ${stats.mae} MW vs ${asset.capacity} MW capacity`}
+            badge={{ text: t("kpi.accuracy.badge"), tone: "success" }}
+            hint={t("kpi.accuracy.hint", { mae: stats.mae, cap: asset.capacity })}
             delta={
               revision > 0
                 ? { value: deltaAccuracy, unit: "pp", goodDirection: "up" }
@@ -207,14 +204,14 @@ const Index = () => {
             }
           />
           <KpiCard
-            label="Predicted energy"
+            label={t("kpi.predicted")}
             value={(stats.predictedMWh / 1000).toFixed(2)}
             unit="GWh"
             badge={{
-              text: asset.type === "solar" ? "Solar" : "Wind",
+              text: asset.type === "solar" ? t("assets.solar") : t("assets.wind"),
               tone: asset.type === "solar" ? "solar" : "wind",
             }}
-            hint={`Peak ${peak.toFixed(0)} MW · over next 24h`}
+            hint={t("kpi.predicted.hint", { peak: peak.toFixed(0) })}
             delta={
               revision > 0
                 ? { value: deltaPredicted / 1000, unit: "GWh", goodDirection: "up" }
@@ -222,10 +219,10 @@ const Index = () => {
             }
           />
           <KpiCard
-            label="Model confidence"
+            label={t("kpi.confidence")}
             value={stats.confidence}
             badge={{ text: `±${(avgBandWidth / 2).toFixed(0)} MW`, tone: "neutral" }}
-            hint="Average P10–P90 band half-width"
+            hint={t("kpi.confidence.hint")}
             delta={
               revision > 0
                 ? { value: deltaBand / 2, unit: "MW", goodDirection: "down" }
@@ -233,11 +230,18 @@ const Index = () => {
             }
           />
           <KpiCard
-            label={district === "all" ? "Karnataka scope" : `${district} scope`}
+            label={
+              district === "all"
+                ? t("kpi.scope.all")
+                : t("kpi.scope.district", { district: t(`district.${district}`) })
+            }
             value={(scopeStats.totalPredicted / 1000).toFixed(1)}
             unit="GWh"
-            badge={{ text: `${visibleAssets.length} plants`, tone: "neutral" }}
-            hint={`${scopeStats.totalCap.toLocaleString()} MW installed · ${horizon}`}
+            badge={{ text: t("kpi.plants", { n: visibleAssets.length }), tone: "neutral" }}
+            hint={t("kpi.scope.hint", {
+              cap: scopeStats.totalCap.toLocaleString(),
+              horizon: t(`horizon.${horizon}`),
+            })}
           />
         </section>
 
