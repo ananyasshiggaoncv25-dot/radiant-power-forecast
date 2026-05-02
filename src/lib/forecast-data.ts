@@ -14,11 +14,22 @@ export interface ForecastPoint {
   weather: number; // irradiance for solar (W/m²) or wind speed (m/s)
 }
 
+export const DISTRICTS = [
+  "Tumakuru",
+  "Kalaburagi",
+  "Koppal",
+  "Chitradurga",
+  "Gadag",
+  "Ballari",
+] as const;
+export type District = (typeof DISTRICTS)[number];
+
 export interface Asset {
   id: string;
   name: string;
   type: AssetType;
   capacity: number; // MW
+  district: District;
   region: string;
   cluster: string;
   lat: number;
@@ -26,12 +37,12 @@ export interface Asset {
 }
 
 export const ASSETS: Asset[] = [
-  { id: "sol-pavagada-01", name: "Pavagada Solar Park", type: "solar", capacity: 2050, region: "Tumakuru, Karnataka", cluster: "Pavagada Solar Cluster", lat: 14.10, lng: 77.28 },
-  { id: "sol-kalaburagi-02", name: "Kalaburagi PV Field", type: "solar", capacity: 320, region: "Kalaburagi, Karnataka", cluster: "North Karnataka Solar Cluster", lat: 17.33, lng: 76.83 },
-  { id: "sol-koppal-03", name: "Koppal Solar Plant", type: "solar", capacity: 280, region: "Koppal, Karnataka", cluster: "North Karnataka Solar Cluster", lat: 15.35, lng: 76.15 },
-  { id: "win-chitradurga-01", name: "Chitradurga Wind Farm", type: "wind", capacity: 410, region: "Chitradurga, Karnataka", cluster: "Chitradurga Wind Cluster", lat: 14.23, lng: 76.40 },
-  { id: "win-gadag-02", name: "Kappatagudda Wind Farm", type: "wind", capacity: 260, region: "Gadag, Karnataka", cluster: "Gadag Wind Cluster", lat: 15.43, lng: 75.63 },
-  { id: "win-bellary-03", name: "Sandur Ridge Wind", type: "wind", capacity: 180, region: "Ballari, Karnataka", cluster: "Bellary Wind Cluster", lat: 15.10, lng: 76.55 },
+  { id: "sol-pavagada-01", name: "Pavagada Solar Park", type: "solar", capacity: 2050, district: "Tumakuru", region: "Tumakuru, Karnataka", cluster: "Pavagada Solar Cluster", lat: 14.10, lng: 77.28 },
+  { id: "sol-kalaburagi-02", name: "Kalaburagi PV Field", type: "solar", capacity: 320, district: "Kalaburagi", region: "Kalaburagi, Karnataka", cluster: "North Karnataka Solar Cluster", lat: 17.33, lng: 76.83 },
+  { id: "sol-koppal-03", name: "Koppal Solar Plant", type: "solar", capacity: 280, district: "Koppal", region: "Koppal, Karnataka", cluster: "North Karnataka Solar Cluster", lat: 15.35, lng: 76.15 },
+  { id: "win-chitradurga-01", name: "Chitradurga Wind Farm", type: "wind", capacity: 410, district: "Chitradurga", region: "Chitradurga, Karnataka", cluster: "Chitradurga Wind Cluster", lat: 14.23, lng: 76.40 },
+  { id: "win-gadag-02", name: "Kappatagudda Wind Farm", type: "wind", capacity: 260, district: "Gadag", region: "Gadag, Karnataka", cluster: "Gadag Wind Cluster", lat: 15.43, lng: 75.63 },
+  { id: "win-bellary-03", name: "Sandur Ridge Wind", type: "wind", capacity: 180, district: "Ballari", region: "Ballari, Karnataka", cluster: "Bellary Wind Cluster", lat: 15.10, lng: 76.55 },
 ];
 
 // Deterministic pseudo-random for stable mock data
