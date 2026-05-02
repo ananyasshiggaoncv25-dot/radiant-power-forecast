@@ -32,7 +32,7 @@ const Index = () => {
             <div className="max-w-2xl">
               <div className="inline-flex items-center gap-2 text-xs font-medium px-3 py-1.5 rounded-full bg-primary/8 text-primary border border-primary/15 mb-4">
                 <Sparkles className="h-3.5 w-3.5" />
-                <span>Single unified model · solar + wind · global</span>
+                <span>Unified model · solar + wind · Karnataka grid</span>
               </div>
               <h1 className="font-display text-4xl lg:text-5xl font-semibold leading-[1.05] tracking-tight">
                 Forecast every megawatt
@@ -41,9 +41,9 @@ const Index = () => {
                 </span>
               </h1>
               <p className="mt-4 text-base text-muted-foreground leading-relaxed max-w-xl">
-                Day-ahead, intra-day and hourly probabilistic predictions across plants and clusters —
-                trained on weather reanalyses and operational telemetry, generalising across geographies
-                without per-site retraining.
+                Day-ahead, intra-day and hourly probabilistic predictions for solar and wind plants
+                across Karnataka — trained on IMD &amp; ECMWF weather data and KPTCL operational
+                telemetry, generalising from Pavagada to Chitradurga without per-site retraining.
               </p>
             </div>
             <div className="flex items-center gap-3">
