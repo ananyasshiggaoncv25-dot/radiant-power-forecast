@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { ArrowDownRight, ArrowUpRight, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface KpiCardProps {
@@ -7,6 +8,8 @@ interface KpiCardProps {
   unit?: string;
   badge?: { text: string; tone?: "success" | "solar" | "wind" | "neutral" };
   hint?: string;
+  /** Numeric delta vs previous update; if set a chip is rendered. */
+  delta?: { value: number; unit?: string; goodDirection?: "up" | "down" };
   className?: string;
 }
 
@@ -17,7 +20,44 @@ const toneClasses: Record<string, string> = {
   neutral: "bg-secondary text-secondary-foreground",
 };
 
-export const KpiCard = ({ label, value, unit, badge, hint, className }: KpiCardProps) => {
+const DeltaChip = ({
+  value,
+  unit,
+  goodDirection = "up",
+}: {
+  value: number;
+  unit?: string;
+  goodDirection?: "up" | "down";
+}) => {
+  const abs = Math.abs(value);
+  if (abs < 0.05) {
+    return (
+      <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-secondary text-muted-foreground">
+        <Minus className="h-3 w-3" /> 0
+      </span>
+    );
+  }
+  const isUp = value > 0;
+  const isGood = (isUp && goodDirection === "up") || (!isUp && goodDirection === "down");
+  const tone = isGood ? "bg-success/12 text-success" : "bg-warning/15 text-warning-foreground";
+  const Icon = isUp ? ArrowUpRight : ArrowDownRight;
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-md tabular animate-fade-in-up",
+        tone
+      )}
+      title="Change vs previous update"
+    >
+      <Icon className="h-3 w-3" />
+      {isUp ? "+" : "−"}
+      {abs < 10 ? abs.toFixed(1) : abs.toFixed(0)}
+      {unit && <span className="ml-0.5 opacity-80">{unit}</span>}
+    </span>
+  );
+};
+
+export const KpiCard = ({ label, value, unit, badge, hint, delta, className }: KpiCardProps) => {
   return (
     <div
       className={cn(
@@ -40,13 +80,15 @@ export const KpiCard = ({ label, value, unit, badge, hint, className }: KpiCardP
           </span>
         )}
       </div>
-      <div className="flex items-baseline gap-1.5">
+      <div className="flex items-baseline gap-2">
         <span className="font-display text-4xl font-semibold tabular text-foreground leading-none">
           {value}
         </span>
         {unit && <span className="text-sm font-medium text-muted-foreground">{unit}</span>}
+        {delta && <DeltaChip {...delta} />}
       </div>
       {hint && <div className="mt-3 text-xs text-muted-foreground">{hint}</div>}
     </div>
   );
 };
+

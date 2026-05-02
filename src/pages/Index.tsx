@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Activity, Gauge, Sparkles, Sun, TrendingUp, Wind } from "lucide-react";
 import { Header } from "@/components/forecast/Header";
 import { KpiCard } from "@/components/forecast/KpiCard";
@@ -6,20 +6,142 @@ import { ForecastChart } from "@/components/forecast/ForecastChart";
 import { AssetSelector } from "@/components/forecast/AssetSelector";
 import { WeatherPanel } from "@/components/forecast/WeatherPanel";
 import { HorizonTabs } from "@/components/forecast/HorizonTabs";
-import { ASSETS, AssetType, Horizon, computeStats, generateForecast } from "@/lib/forecast-data";
+import { KarnatakaMap } from "@/components/forecast/KarnatakaMap";
+import { DistrictFilter } from "@/components/forecast/DistrictFilter";
+import { RefreshControl } from "@/components/forecast/RefreshControl";
+import { UncertaintyBreakdown } from "@/components/forecast/UncertaintyBreakdown";
+import {
+  ASSETS,
+  AssetType,
+  DISTRICTS,
+  District,
+  Horizon,
+  computeStats,
+  generateForecast,
+} from "@/lib/forecast-data";
+import { toast } from "@/hooks/use-toast";
+
+const REFRESH_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
+const TICK_MS = 1000;
 
 const Index = () => {
-  const [selectedId, setSelectedId] = useState(ASSETS[0].id);
+  const [district, setDistrict] = useState<District | "all">("all");
   const [filter, setFilter] = useState<AssetType | "all">("all");
+  const [selectedId, setSelectedId] = useState(ASSETS[0].id);
   const [horizon, setHorizon] = useState<Horizon>("intra-day");
 
-  const asset = useMemo(() => ASSETS.find((a) => a.id === selectedId)!, [selectedId]);
-  const data = useMemo(() => generateForecast(asset, horizon), [asset, horizon]);
+  const [revision, setRevision] = useState(0);
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState(() => new Date());
+  const [nextInMs, setNextInMs] = useState(REFRESH_INTERVAL_MS);
+
+  // District counts for the chip filter
+  const districtCounts = useMemo(() => {
+    const c: Record<string, number> = { all: ASSETS.length };
+    DISTRICTS.forEach((d) => (c[d] = ASSETS.filter((a) => a.district === d).length));
+    return c as Record<District | "all", number>;
+  }, []);
+
+  // Filter assets by district + type
+  const visibleAssets = useMemo(
+    () =>
+      ASSETS.filter(
+        (a) => (district === "all" || a.district === district) && (filter === "all" || a.type === filter)
+      ),
+    [district, filter]
+  );
+
+  // Keep the selected asset valid given the filters
+  useEffect(() => {
+    if (!visibleAssets.find((a) => a.id === selectedId) && visibleAssets[0]) {
+      setSelectedId(visibleAssets[0].id);
+    }
+  }, [visibleAssets, selectedId]);
+
+  const asset = useMemo(
+    () => ASSETS.find((a) => a.id === selectedId) ?? ASSETS[0],
+    [selectedId]
+  );
+
+  // Forecast for the current revision + previous revision (for delta highlighting)
+  const data = useMemo(
+    () => generateForecast(asset, horizon, 14, revision),
+    [asset, horizon, revision]
+  );
+  const prevData = useMemo(
+    () =>
+      revision === 0
+        ? data
+        : generateForecast(asset, horizon, 14, revision - 1),
+    [asset, horizon, revision, data]
+  );
+
   const stats = useMemo(() => computeStats(data, asset.capacity), [data, asset]);
+  const prevStats = useMemo(
+    () => computeStats(prevData, asset.capacity),
+    [prevData, asset]
+  );
 
   const peak = Math.max(...data.map((d) => d.p50));
-  const avgBandWidth =
-    data.reduce((s, d) => s + (d.p90 - d.p10), 0) / data.length;
+  const avgBandWidth = data.reduce((s, d) => s + (d.p90 - d.p10), 0) / data.length;
+
+  const deltaPredicted = stats.predictedMWh - prevStats.predictedMWh;
+  const deltaAccuracy = stats.accuracy - prevStats.accuracy;
+  const deltaBand = avgBandWidth - prevData.reduce((s, d) => s + (d.p90 - d.p10), 0) / prevData.length;
+
+  // KPIs for the active district scope (sum across visible assets, current horizon)
+  const scopeStats = useMemo(() => {
+    const totalCap = visibleAssets.reduce((s, a) => s + a.capacity, 0);
+    const totalPredicted = visibleAssets.reduce((s, a) => {
+      const d = generateForecast(a, horizon, 14, revision);
+      return s + d.reduce((ss, p) => ss + p.p50, 0);
+    }, 0);
+    return { totalCap, totalPredicted };
+  }, [visibleAssets, horizon, revision]);
+
+  // ---- Auto-refresh loop ----
+  const triggerRefresh = (silent = false) => {
+    setRevision((r) => r + 1);
+    setLastUpdated(new Date());
+    setNextInMs(REFRESH_INTERVAL_MS);
+    if (!silent) {
+      toast({
+        title: "Forecast refreshed",
+        description: `Latest run pulled at ${new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}. Changes vs previous update are highlighted.`,
+      });
+    }
+  };
+
+  const tickRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (!autoRefresh) {
+      if (tickRef.current) {
+        window.clearInterval(tickRef.current);
+        tickRef.current = null;
+      }
+      return;
+    }
+    setNextInMs(REFRESH_INTERVAL_MS);
+    setLastUpdated(new Date());
+    tickRef.current = window.setInterval(() => {
+      setNextInMs((ms) => {
+        const next = ms - TICK_MS;
+        if (next <= 0) {
+          // refresh
+          setRevision((r) => r + 1);
+          setLastUpdated(new Date());
+          return REFRESH_INTERVAL_MS;
+        }
+        return next;
+      });
+    }, TICK_MS);
+    return () => {
+      if (tickRef.current) window.clearInterval(tickRef.current);
+    };
+  }, [autoRefresh]);
 
   return (
     <div className="min-h-screen bg-gradient-surface">
@@ -41,20 +163,31 @@ const Index = () => {
                 </span>
               </h1>
               <p className="mt-4 text-base text-muted-foreground leading-relaxed max-w-xl">
-                Day-ahead, intra-day and hourly probabilistic predictions for solar and wind plants
-                across Karnataka — trained on IMD &amp; ECMWF weather data and KPTCL operational
-                telemetry, generalising from Pavagada to Chitradurga without per-site retraining.
+                Day-ahead, intra-day and hourly probabilistic predictions for solar and wind
+                plants across Karnataka — trained on IMD &amp; ECMWF weather data and KPTCL
+                operational telemetry, generalising from Pavagada to Chitradurga without
+                per-site retraining.
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <button className="px-4 py-2.5 text-sm font-medium rounded-xl border border-border bg-card hover:bg-secondary/60 transition-colors">
-                Export forecast
-              </button>
+              <RefreshControl
+                enabled={autoRefresh}
+                onToggle={() => setAutoRefresh((v) => !v)}
+                onRefresh={() => triggerRefresh(false)}
+                lastUpdated={lastUpdated}
+                nextInMs={nextInMs}
+                intervalMs={REFRESH_INTERVAL_MS}
+              />
               <button className="px-4 py-2.5 text-sm font-medium rounded-xl bg-gradient-hero text-primary-foreground shadow-elevated hover:shadow-glow transition-all">
                 Run new prediction
               </button>
             </div>
           </div>
+        </section>
+
+        {/* District filter */}
+        <section className="mb-6">
+          <DistrictFilter value={district} onChange={setDistrict} counts={districtCounts} />
         </section>
 
         {/* KPIs */}
@@ -65,6 +198,11 @@ const Index = () => {
             unit="%"
             badge={{ text: "24h MAPE", tone: "success" }}
             hint={`MAE ${stats.mae} MW vs ${asset.capacity} MW capacity`}
+            delta={
+              revision > 0
+                ? { value: deltaAccuracy, unit: "pp", goodDirection: "up" }
+                : undefined
+            }
           />
           <KpiCard
             label="Predicted energy"
@@ -75,30 +213,48 @@ const Index = () => {
               tone: asset.type === "solar" ? "solar" : "wind",
             }}
             hint={`Peak ${peak.toFixed(0)} MW · over next 24h`}
+            delta={
+              revision > 0
+                ? { value: deltaPredicted / 1000, unit: "GWh", goodDirection: "up" }
+                : undefined
+            }
           />
           <KpiCard
             label="Model confidence"
             value={stats.confidence}
             badge={{ text: `±${(avgBandWidth / 2).toFixed(0)} MW`, tone: "neutral" }}
             hint="Average P10–P90 band half-width"
+            delta={
+              revision > 0
+                ? { value: deltaBand / 2, unit: "MW", goodDirection: "down" }
+                : undefined
+            }
           />
           <KpiCard
-            label="Capacity factor"
-            value={((stats.predictedMWh / 24 / asset.capacity) * 100).toFixed(0)}
-            unit="%"
-            badge={{ text: horizon, tone: "neutral" }}
-            hint={`Cluster: ${asset.cluster}`}
+            label={district === "all" ? "Karnataka scope" : `${district} scope`}
+            value={(scopeStats.totalPredicted / 1000).toFixed(1)}
+            unit="GWh"
+            badge={{ text: `${visibleAssets.length} plants`, tone: "neutral" }}
+            hint={`${scopeStats.totalCap.toLocaleString()} MW installed · ${horizon}`}
           />
         </section>
 
         {/* Main grid */}
-        <section className="grid grid-cols-1 lg:grid-cols-[300px_1fr_280px] gap-5">
-          <AssetSelector
-            selectedId={selectedId}
-            onSelect={setSelectedId}
-            filter={filter}
-            onFilterChange={setFilter}
-          />
+        <section className="grid grid-cols-1 lg:grid-cols-[300px_1fr_300px] gap-5">
+          <div className="space-y-5">
+            <KarnatakaMap
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+              districtFilter={district}
+            />
+            <AssetSelector
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+              filter={filter}
+              onFilterChange={setFilter}
+              assets={visibleAssets}
+            />
+          </div>
 
           <div className="rounded-2xl border border-border bg-card p-6 shadow-card min-w-0">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -111,12 +267,21 @@ const Index = () => {
                         : "bg-gradient-wind text-wind-foreground"
                     }`}
                   >
-                    {asset.type === "solar" ? <Sun className="h-3.5 w-3.5" /> : <Wind className="h-3.5 w-3.5" />}
+                    {asset.type === "solar" ? (
+                      <Sun className="h-3.5 w-3.5" />
+                    ) : (
+                      <Wind className="h-3.5 w-3.5" />
+                    )}
                   </span>
                   <h2 className="font-display text-xl font-semibold">{asset.name}</h2>
+                  {revision > 0 && (
+                    <span className="ml-2 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                      rev {revision}
+                    </span>
+                  )}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  {asset.cluster} · {asset.region} · {asset.capacity} MW installed
+                  {asset.district} · {asset.cluster} · {asset.capacity} MW installed
                 </div>
               </div>
               <HorizonTabs value={horizon} onChange={setHorizon} />
@@ -126,23 +291,34 @@ const Index = () => {
 
             <div className="mt-6 pt-5 border-t border-border grid grid-cols-3 gap-4">
               <MiniStat icon={TrendingUp} label="Peak generation" value={`${peak.toFixed(0)} MW`} />
-              <MiniStat icon={Gauge} label="Uncertainty (avg)" value={`±${(avgBandWidth / 2).toFixed(0)} MW`} />
+              <MiniStat
+                icon={Gauge}
+                label="Uncertainty (avg)"
+                value={`±${(avgBandWidth / 2).toFixed(0)} MW`}
+              />
               <MiniStat icon={Activity} label="Resolution" value="60 min" />
             </div>
           </div>
 
           <div className="space-y-5">
+            <UncertaintyBreakdown
+              asset={asset}
+              horizon={horizon}
+              avgBandWidth={avgBandWidth}
+            />
             <WeatherPanel asset={asset} />
-            <ModelCard horizon={horizon} />
           </div>
         </section>
 
         <footer className="mt-16 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
-          <div>© 2026 Aether Energy · Probabilistic generation forecasting</div>
+          <div>© 2026 Aether Energy · Karnataka generation forecasting</div>
           <div className="flex items-center gap-4">
             <span>v3.4.0</span>
             <span>·</span>
-            <span>Last training: 6h ago</span>
+            <span>
+              Last training: 6h ago · Revision {revision} · Updated{" "}
+              {lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            </span>
           </div>
         </footer>
       </main>
@@ -167,35 +343,6 @@ const MiniStat = ({
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="text-sm font-semibold tabular">{value}</div>
     </div>
-  </div>
-);
-
-const ModelCard = ({ horizon }: { horizon: Horizon }) => (
-  <div className="rounded-2xl border border-border bg-gradient-hero p-5 shadow-elevated text-primary-foreground overflow-hidden relative">
-    <div className="absolute -top-12 -right-12 h-40 w-40 rounded-full bg-primary-glow/30 blur-3xl" />
-    <div className="relative">
-      <div className="text-[10px] font-semibold uppercase tracking-wider opacity-80 mb-3">
-        Active model
-      </div>
-      <div className="font-display text-lg font-semibold leading-tight mb-1">
-        AetherNet · Quantile Transformer
-      </div>
-      <div className="text-xs opacity-80 mb-4">
-        Multi-horizon, multi-asset, geography-agnostic. Outputs full P5–P95 distribution.
-      </div>
-      <div className="space-y-2 text-xs">
-        <Row k="Horizon" v={horizon} />
-        <Row k="Inputs" v="NWP · SCADA · climatology" />
-        <Row k="Calibration" v="0.94 (CRPS)" />
-      </div>
-    </div>
-  </div>
-);
-
-const Row = ({ k, v }: { k: string; v: string }) => (
-  <div className="flex items-center justify-between gap-4 py-1 border-b border-primary-foreground/10 last:border-0">
-    <span className="opacity-70">{k}</span>
-    <span className="font-medium tabular capitalize">{v}</span>
   </div>
 );
 
