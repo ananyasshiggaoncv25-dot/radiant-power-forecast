@@ -7,10 +7,21 @@ interface Props {
   onSelect: (id: string) => void;
   filter: AssetType | "all";
   onFilterChange: (f: AssetType | "all") => void;
+  /** Already-scoped (e.g. by district). Defaults to all assets. */
+  assets?: Asset[];
 }
 
-export const AssetSelector = ({ selectedId, onSelect, filter, onFilterChange }: Props) => {
-  const filtered = ASSETS.filter((a) => filter === "all" || a.type === filter);
+export const AssetSelector = ({ selectedId, onSelect, filter, onFilterChange, assets }: Props) => {
+  const source = assets ?? ASSETS;
+  const filtered = source.filter((a) => filter === "all" || a.type === filter);
+  return (
+    <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="font-display text-base font-semibold">Assets &amp; Clusters</h3>
+        <span className="text-xs text-muted-foreground tabular">{filtered.length} active</span>
+      </div>
+      <div className="flex gap-1 p-1 bg-secondary rounded-xl mb-4">
+
   return (
     <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
       <div className="flex items-center justify-between mb-4">
