@@ -282,12 +282,13 @@ const Index = () => {
                   <h2 className="font-display text-xl font-semibold">{asset.name}</h2>
                   {revision > 0 && (
                     <span className="ml-2 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                      rev {revision}
+                      {t("chart.rev")} {revision}
                     </span>
                   )}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  {asset.district} · {asset.cluster} · {asset.capacity} MW installed
+                  {t(`district.${asset.district}`)} · {asset.cluster} ·{" "}
+                  {t("chart.installed", { cap: asset.capacity })}
                 </div>
               </div>
               <HorizonTabs value={horizon} onChange={setHorizon} />
@@ -296,13 +297,13 @@ const Index = () => {
             <ForecastChart data={data} assetType={asset.type} capacity={asset.capacity} />
 
             <div className="mt-6 pt-5 border-t border-border grid grid-cols-3 gap-4">
-              <MiniStat icon={TrendingUp} label="Peak generation" value={`${peak.toFixed(0)} MW`} />
+              <MiniStat icon={TrendingUp} label={t("chart.peak")} value={`${peak.toFixed(0)} MW`} />
               <MiniStat
                 icon={Gauge}
-                label="Uncertainty (avg)"
+                label={t("chart.uncertainty")}
                 value={`±${(avgBandWidth / 2).toFixed(0)} MW`}
               />
-              <MiniStat icon={Activity} label="Resolution" value="60 min" />
+              <MiniStat icon={Activity} label={t("chart.resolution")} value="60 min" />
             </div>
           </div>
 
@@ -317,13 +318,15 @@ const Index = () => {
         </section>
 
         <footer className="mt-16 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
-          <div>© 2026 Aether Energy · Karnataka generation forecasting</div>
+          <div>{t("footer.copyright")}</div>
           <div className="flex items-center gap-4">
             <span>v3.4.0</span>
             <span>·</span>
             <span>
-              Last training: 6h ago · Revision {revision} · Updated{" "}
-              {lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              {t("footer.lastTraining", {
+                rev: revision,
+                time: lastUpdated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+              })}
             </span>
           </div>
         </footer>
