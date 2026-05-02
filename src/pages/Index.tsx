@@ -19,12 +19,14 @@ import {
   computeStats,
   generateForecast,
 } from "@/lib/forecast-data";
+import { useI18n } from "@/lib/i18n";
 import { toast } from "@/hooks/use-toast";
 
 const REFRESH_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
 const TICK_MS = 1000;
 
 const Index = () => {
+  const { t } = useI18n();
   const [district, setDistrict] = useState<District | "all">("all");
   const [filter, setFilter] = useState<AssetType | "all">("all");
   const [selectedId, setSelectedId] = useState(ASSETS[0].id);
@@ -106,11 +108,11 @@ const Index = () => {
     setNextInMs(REFRESH_INTERVAL_MS);
     if (!silent) {
       toast({
-        title: "Forecast refreshed",
-        description: `Latest run pulled at ${new Date().toLocaleTimeString([], {
+        title: t("refresh.toastTitle"),
+        description: `${t("refresh.updated")} ${new Date().toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
-        })}. Changes vs previous update are highlighted.`,
+        })}`,
       });
     }
   };
