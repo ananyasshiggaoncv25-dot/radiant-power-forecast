@@ -4,6 +4,7 @@ import {
   type Asset,
   type Horizon,
 } from "@/lib/forecast-data";
+import { useI18n } from "@/lib/i18n";
 
 interface Props {
   asset: Asset;
@@ -12,14 +13,15 @@ interface Props {
 }
 
 export const UncertaintyBreakdown = ({ asset, horizon, avgBandWidth }: Props) => {
+  const { t } = useI18n();
   const drivers = getUncertaintyDrivers(asset, horizon);
   return (
     <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
       <div className="flex items-start justify-between mb-1">
         <div>
-          <h3 className="font-display text-base font-semibold">Uncertainty drivers</h3>
+          <h3 className="font-display text-base font-semibold">{t("uncertainty.title")}</h3>
           <div className="text-xs text-muted-foreground">
-            What widens the P10–P90 band on this {horizon} run
+            {t("uncertainty.subtitle", { horizon: t(`horizon.${horizon}`) })}
           </div>
         </div>
         <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full bg-warning/15 text-warning-foreground border border-warning/30">
@@ -55,8 +57,7 @@ export const UncertaintyBreakdown = ({ asset, horizon, avgBandWidth }: Props) =>
       </div>
 
       <div className="mt-4 pt-4 border-t border-border text-[11px] text-muted-foreground leading-relaxed">
-        Attribution computed via SHAP-style decomposition over the quantile
-        regressor's weather features.
+        {t("uncertainty.footer")}
       </div>
     </div>
   );

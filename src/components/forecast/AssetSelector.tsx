@@ -1,5 +1,6 @@
 import { Sun, Wind, MapPin } from "lucide-react";
 import { ASSETS, type Asset, type AssetType } from "@/lib/forecast-data";
+import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -18,15 +19,16 @@ export const AssetSelector = ({
   onFilterChange,
   assets,
 }: Props) => {
+  const { t } = useI18n();
   const source = assets ?? ASSETS;
   const filtered = source.filter((a) => filter === "all" || a.type === filter);
 
   return (
     <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-display text-base font-semibold">Assets &amp; Clusters</h3>
+        <h3 className="font-display text-base font-semibold">{t("assets.title")}</h3>
         <span className="text-xs text-muted-foreground tabular">
-          {filtered.length} active
+          {t("assets.active", { n: filtered.length })}
         </span>
       </div>
       <div className="flex gap-1 p-1 bg-secondary rounded-xl mb-4">
@@ -35,20 +37,20 @@ export const AssetSelector = ({
             key={f}
             onClick={() => onFilterChange(f)}
             className={cn(
-              "flex-1 px-3 py-1.5 text-xs font-medium rounded-lg capitalize transition-all",
+              "flex-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-all",
               filter === f
                 ? "bg-card text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
-            {f}
+            {t(`assets.${f}`)}
           </button>
         ))}
       </div>
       <div className="space-y-1.5 max-h-[420px] overflow-y-auto -mr-2 pr-2">
         {filtered.length === 0 && (
           <div className="text-xs text-muted-foreground px-3 py-6 text-center">
-            No matching plants in this district.
+            {t("assets.empty")}
           </div>
         )}
         {filtered.map((a) => (

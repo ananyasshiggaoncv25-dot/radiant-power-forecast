@@ -1,11 +1,13 @@
 import { Cloud, Droplets, Thermometer, Wind as WindIcon, Sun } from "lucide-react";
 import type { Asset } from "@/lib/forecast-data";
+import { useI18n } from "@/lib/i18n";
 
 interface Props {
   asset: Asset;
 }
 
 export const WeatherPanel = ({ asset }: Props) => {
+  const { t } = useI18n();
   // Deterministic mock based on asset
   const seed = asset.lat + asset.lng;
   const temp = Math.round(15 + Math.sin(seed) * 10);
@@ -15,16 +17,16 @@ export const WeatherPanel = ({ asset }: Props) => {
   const irradiance = Math.round(420 + Math.abs(Math.sin(seed * 2)) * 480);
 
   const items = [
-    { icon: Thermometer, label: "Temperature", value: `${temp}°C` },
-    { icon: WindIcon, label: "Wind speed", value: `${wind} m/s` },
-    { icon: Cloud, label: "Cloud cover", value: `${cloud}%` },
-    { icon: Droplets, label: "Humidity", value: `${humidity}%` },
-    { icon: Sun, label: "Irradiance", value: `${irradiance} W/m²` },
+    { icon: Thermometer, label: t("weather.temperature"), value: `${temp}°C` },
+    { icon: WindIcon, label: t("weather.windSpeed"), value: `${wind} m/s` },
+    { icon: Cloud, label: t("weather.cloudCover"), value: `${cloud}%` },
+    { icon: Droplets, label: t("weather.humidity"), value: `${humidity}%` },
+    { icon: Sun, label: t("weather.irradiance"), value: `${irradiance} W/m²` },
   ];
 
   return (
     <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
-      <h3 className="font-display text-base font-semibold mb-4">Weather inputs</h3>
+      <h3 className="font-display text-base font-semibold mb-4">{t("weather.title")}</h3>
       <div className="space-y-3">
         {items.map(({ icon: Icon, label, value }) => (
           <div key={label} className="flex items-center justify-between">
@@ -37,7 +39,7 @@ export const WeatherPanel = ({ asset }: Props) => {
         ))}
       </div>
       <div className="mt-4 pt-4 border-t border-border text-xs text-muted-foreground leading-relaxed">
-        IMD station data blended with ECMWF forecasts, downscaled to plant coordinates in Karnataka.
+        {t("weather.footer")}
       </div>
     </div>
   );
