@@ -54,8 +54,14 @@ function seeded(seed: number) {
   };
 }
 
-export function generateForecast(asset: Asset, horizon: Horizon, currentHour = 14): ForecastPoint[] {
-  const rand = seeded(asset.id.length * 13 + (horizon === "day-ahead" ? 7 : horizon === "intra-day" ? 11 : 17));
+export function generateForecast(
+  asset: Asset,
+  horizon: Horizon,
+  currentHour = 14,
+  revision = 0,
+): ForecastPoint[] {
+  const horizonSeed = horizon === "day-ahead" ? 7 : horizon === "intra-day" ? 11 : 17;
+  const rand = seeded(asset.id.length * 13 + horizonSeed + revision * 31);
   const hours = 24;
   const out: ForecastPoint[] = [];
 
@@ -128,4 +134,44 @@ export function computeStats(points: ForecastPoint[], capacity: number): Cluster
     confidence: conf,
     mae: round(mae),
   };
+}
+
+// Driver attribution for the P10/P50/P90 spread.
+export interface UncertaintyDriver {
+  factor: string;
+  share: number; // 0..1
+  description: string;
+}
+
+export function getUncertaintyDrivers(
+  asset: Asset,
+  horizon: Horizon,
+): UncertaintyDriver[] {
+  // Horizon-dependent emphasis. Longer horizon → weather model error dominates.
+  const long = horizon === "day-ahead" ? 1 : horizon === "intra-day" ? 0.6 : 0.3;
+  if (asset.type === "solar") {
+    const raw = [
+      { factor: "Cloud cover variability", share: 0.45 + 0.15 * long, description: "Convective clouds shift P10 sharply on hot afternoons." },
+      { factor: "Aerosol & dust load", share: 0.18 + 0.05 * long, description: "Pre-monsoon dust over Tumakuru reduces direct irradiance." },
+      { factor: "Panel temperature", share: 0.12, description: "Higher module temp lowers efficiency, biases P50 down." },
+      { factor: "NWP irradiance error", share: 0.15 + 0.10 * long, description: "ECMWF SSRD bias grows with lead time." },
+      { factor: "Soiling & telemetry noise", share: 0.10, description: "Sensor drift between O&M cleanings." },
+    ];
+    return normalize(raw);
+  }
+  const raw = [
+    { factor: "Wind speed forecast error", share: 0.50 + 0.15 * long, description: "Hub-height wind from NWP is the largest driver of MW spread." },
+    { factor: "Wind direction shifts", share: 0.15 + 0.05 * long, description: "Wake effects change with veer across the farm." },
+    { factor: "Air density (temp & pressure)", share: 0.12, description: "Cooler nights raise density and output; thermal cycle adds noise." },
+    { factor: "Turbulence intensity", share: 0.13 + 0.05 * long, description: "Affects derating and short-term ramps." },
+    { factor: "Curtailment & availability", share: 0.10, description: "Grid curtailments and turbine downtime." },
+  ];
+  return normalize(raw);
+}
+
+function normalize(rows: UncertaintyDriver[]): UncertaintyDriver[] {
+  const total = rows.reduce((s, r) => s + r.share, 0);
+  return rows
+    .map((r) => ({ ...r, share: r.share / total }))
+    .sort((a, b) => b.share - a.share);
 }
