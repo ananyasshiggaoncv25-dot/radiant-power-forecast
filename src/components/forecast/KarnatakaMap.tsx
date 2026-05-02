@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Sun, Wind } from "lucide-react";
 import { ASSETS, type Asset, type District } from "@/lib/forecast-data";
+import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -41,6 +42,7 @@ const DISTRICT_LABELS: { name: District; lat: number; lng: number }[] = [
 ];
 
 export const KarnatakaMap = ({ selectedId, onSelect, districtFilter }: Props) => {
+  const { t: tt } = useI18n();
   const outlinePath = useMemo(() => {
     const pts = OUTLINE.map(([lat, lng]) => project(lat, lng));
     return (
@@ -54,17 +56,17 @@ export const KarnatakaMap = ({ selectedId, onSelect, districtFilter }: Props) =>
     <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-display text-base font-semibold">Karnataka plant map</h3>
+          <h3 className="font-display text-base font-semibold">{tt("map.title")}</h3>
           <div className="text-xs text-muted-foreground">
-            Click a marker to load its forecast
+            {tt("map.subtitle")}
           </div>
         </div>
         <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-solar" /> Solar
+            <span className="h-2.5 w-2.5 rounded-full bg-solar" /> {tt("map.solar")}
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-wind" /> Wind
+            <span className="h-2.5 w-2.5 rounded-full bg-wind" /> {tt("map.wind")}
           </span>
         </div>
       </div>

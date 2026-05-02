@@ -1,5 +1,6 @@
 import { RefreshCw, Pause } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n";
 
 interface Props {
   enabled: boolean;
@@ -28,17 +29,18 @@ export const RefreshControl = ({
   nextInMs,
   intervalMs,
 }: Props) => {
+  const { t } = useI18n();
   const progress = enabled ? 1 - nextInMs / intervalMs : 0;
 
   return (
     <div className="inline-flex items-center gap-2">
       <button
         onClick={onRefresh}
-        title="Pull latest forecast"
+        title={t("refresh.title")}
         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-border bg-card hover:bg-secondary/60 transition-colors"
       >
         <RefreshCw className="h-3.5 w-3.5" />
-        <span>Refresh</span>
+        <span>{t("refresh.refresh")}</span>
       </button>
 
       <button
@@ -64,20 +66,20 @@ export const RefreshControl = ({
                 <span className="absolute inline-flex h-full w-full rounded-full bg-success opacity-75 animate-pulse-soft" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
               </span>
-              <span>Auto · 15 min</span>
+              <span>{t("refresh.auto")}</span>
               <span className="tabular opacity-80">({formatCountdown(nextInMs)})</span>
             </>
           ) : (
             <>
               <Pause className="h-3.5 w-3.5" />
-              <span>Auto-refresh off</span>
+              <span>{t("refresh.off")}</span>
             </>
           )}
         </span>
       </button>
 
       <span className="hidden lg:inline text-[11px] text-muted-foreground tabular">
-        Updated {formatTime(lastUpdated)}
+        {t("refresh.updated")} {formatTime(lastUpdated)}
       </span>
     </div>
   );

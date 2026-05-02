@@ -1,4 +1,5 @@
 import { DISTRICTS, type District } from "@/lib/forecast-data";
+import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -8,16 +9,18 @@ interface Props {
 }
 
 export const DistrictFilter = ({ value, onChange, counts }: Props) => {
+  const { t } = useI18n();
   const items: (District | "all")[] = ["all", ...DISTRICTS];
   return (
     <div className="flex flex-wrap items-center gap-2">
       <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground mr-1">
-        District
+        {t("district.label")}
       </span>
       {items.map((d) => {
         const active = value === d;
         const count = counts[d] ?? 0;
         const disabled = d !== "all" && count === 0;
+        const label = d === "all" ? t("district.all") : t(`district.${d}`);
         return (
           <button
             key={d}
@@ -31,7 +34,7 @@ export const DistrictFilter = ({ value, onChange, counts }: Props) => {
               disabled && "opacity-40 cursor-not-allowed hover:bg-card hover:border-border"
             )}
           >
-            <span>{d === "all" ? "All districts" : d}</span>
+            <span>{label}</span>
             <span
               className={cn(
                 "tabular text-[10px] px-1.5 py-0.5 rounded-full",
