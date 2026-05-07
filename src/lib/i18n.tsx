@@ -14,6 +14,8 @@ const EN: Dict = {
   "nav.models": "Models",
   "nav.reports": "Reports",
   "nav.settings": "Settings",
+  "nav.comingSoon": "Coming soon",
+  "nav.comingSoonDesc": "{section} workspace is being prepared.",
 
   // Hero
   "hero.badge": "Unified model · solar + wind · Karnataka grid",
