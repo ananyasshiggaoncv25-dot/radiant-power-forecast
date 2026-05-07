@@ -6,7 +6,7 @@ type Dict = Record<string, string>;
 
 const EN: Dict = {
   // Header
-  "header.brand": "Aether Energy",
+  "header.brand": "K-Grid Pulse",
   "header.tagline": "Probabilistic forecasting",
   "header.modelsLive": "Models live",
   "nav.dashboard": "Dashboard",
