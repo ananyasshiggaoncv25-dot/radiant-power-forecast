@@ -184,6 +184,12 @@ const KN: Dict = {
   "map.subtitle": "ಮುನ್ಸೂಚನೆ ಲೋಡ್ ಮಾಡಲು ಗುರುತು ಒತ್ತಿರಿ",
   "map.solar": "ಸೌರ",
   "map.wind": "ಪವನ",
+  "asset.sol-pavagada-01": "ಪಾವಗಡ ಸೌರ ಉದ್ಯಾನ",
+  "asset.sol-kalaburagi-02": "ಕಲಬುರಗಿ ಪಿವಿ ಕ್ಷೇತ್ರ",
+  "asset.sol-koppal-03": "ಕೊಪ್ಪಳ ಸೌರ ಸ್ಥಾವರ",
+  "asset.win-chitradurga-01": "ಚಿತ್ರದುರ್ಗ ಪವನ ಫಾರ್ಮ್",
+  "asset.win-gadag-02": "ಕಪ್ಪತಗುಡ್ಡ ಪವನ ಫಾರ್ಮ್",
+  "asset.win-bellary-03": "ಸಂಡೂರ್ ರಿಡ್ಜ್ ಪವನ",
 
   "chart.peak": "ಗರಿಷ್ಠ ಉತ್ಪಾದನೆ",
   "chart.uncertainty": "ಅನಿಶ್ಚಿತತೆ (ಸರಾಸರಿ)",
