@@ -125,6 +125,8 @@ const KN: Dict = {
   "nav.models": "ಮಾದರಿಗಳು",
   "nav.reports": "ವರದಿಗಳು",
   "nav.settings": "ಸಂಯೋಜನೆ",
+  "nav.comingSoon": "ಶೀಘ್ರದಲ್ಲೇ ಬರಲಿದೆ",
+  "nav.comingSoonDesc": "{section} ಕಾರ್ಯಕ್ಷೇತ್ರವನ್ನು ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ.",
 
   "hero.badge": "ಏಕೀಕೃತ ಮಾದರಿ · ಸೌರ + ಪವನ · ಕರ್ನಾಟಕ ಗ್ರಿಡ್",
   "hero.title1": "ಪ್ರತಿ ಮೆಗಾವಾಟ್‌ನ ಮುನ್ಸೂಚನೆ",
