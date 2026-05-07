@@ -6,7 +6,7 @@ type Dict = Record<string, string>;
 
 const EN: Dict = {
   // Header
-  "header.brand": "Aether Energy",
+  "header.brand": "K-Grid Pulse",
   "header.tagline": "Probabilistic forecasting",
   "header.modelsLive": "Models live",
   "nav.dashboard": "Dashboard",
@@ -113,7 +113,7 @@ const EN: Dict = {
     "IMD station data blended with ECMWF forecasts, downscaled to plant coordinates in Karnataka.",
 
   // Footer
-  "footer.copyright": "© 2026 Aether Energy · Karnataka generation forecasting",
+  "footer.copyright": "© 2026 K-Grid Pulse · Karnataka generation forecasting",
   "footer.lastTraining": "Last training: 6h ago · Revision {rev} · Updated {time}",
 
   // Language
@@ -123,7 +123,7 @@ const EN: Dict = {
 };
 
 const KN: Dict = {
-  "header.brand": "ಏಥರ್ ಎನರ್ಜಿ",
+  "header.brand": "ಕೆ-ಗ್ರಿಡ್ ಪಲ್ಸ್",
   "header.tagline": "ಸಂಭವನೀಯ ಮುನ್ಸೂಚನೆ",
   "header.modelsLive": "ಮಾದರಿಗಳು ಸಕ್ರಿಯ",
   "nav.dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
