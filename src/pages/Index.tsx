@@ -158,15 +158,6 @@ const Index = () => {
                 <Sparkles className="h-3.5 w-3.5" />
                 <span>{t("hero.badge")}</span>
               </div>
-              <h1 className="font-display text-4xl lg:text-5xl font-semibold leading-[1.05] tracking-tight">
-                {t("hero.title1")}
-                <span className="block text-muted-foreground font-normal italic">
-                  {t("hero.title2")}
-                </span>
-              </h1>
-              <p className="mt-4 text-base text-muted-foreground leading-relaxed max-w-xl">
-                {t("hero.subtitle")}
-              </p>
             </div>
             <div className="flex items-center gap-3">
               <RefreshControl
