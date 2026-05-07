@@ -123,7 +123,7 @@ const EN: Dict = {
 };
 
 const KN: Dict = {
-  "header.brand": "ಏಥರ್ ಎನರ್ಜಿ",
+  "header.brand": "ಕೆ-ಗ್ರಿಡ್ ಪಲ್ಸ್",
   "header.tagline": "ಸಂಭವನೀಯ ಮುನ್ಸೂಚನೆ",
   "header.modelsLive": "ಮಾದರಿಗಳು ಸಕ್ರಿಯ",
   "nav.dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
