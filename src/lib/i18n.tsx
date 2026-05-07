@@ -14,6 +14,8 @@ const EN: Dict = {
   "nav.models": "Models",
   "nav.reports": "Reports",
   "nav.settings": "Settings",
+  "nav.comingSoon": "Coming soon",
+  "nav.comingSoonDesc": "{section} workspace is being prepared.",
 
   // Hero
   "hero.badge": "Unified model · solar + wind · Karnataka grid",
@@ -123,6 +125,8 @@ const KN: Dict = {
   "nav.models": "ಮಾದರಿಗಳು",
   "nav.reports": "ವರದಿಗಳು",
   "nav.settings": "ಸಂಯೋಜನೆ",
+  "nav.comingSoon": "ಶೀಘ್ರದಲ್ಲೇ ಬರಲಿದೆ",
+  "nav.comingSoonDesc": "{section} ಕಾರ್ಯಕ್ಷೇತ್ರವನ್ನು ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ.",
 
   "hero.badge": "ಏಕೀಕೃತ ಮಾದರಿ · ಸೌರ + ಪವನ · ಕರ್ನಾಟಕ ಗ್ರಿಡ್",
   "hero.title1": "ಪ್ರತಿ ಮೆಗಾವಾಟ್‌ನ ಮುನ್ಸೂಚನೆ",
