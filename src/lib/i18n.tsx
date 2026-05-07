@@ -74,6 +74,12 @@ const EN: Dict = {
   "map.subtitle": "Click a marker to load its forecast",
   "map.solar": "Solar",
   "map.wind": "Wind",
+  "asset.sol-pavagada-01": "Pavagada Solar Park",
+  "asset.sol-kalaburagi-02": "Kalaburagi PV Field",
+  "asset.sol-koppal-03": "Koppal Solar Plant",
+  "asset.win-chitradurga-01": "Chitradurga Wind Farm",
+  "asset.win-gadag-02": "Kappatagudda Wind Farm",
+  "asset.win-bellary-03": "Sandur Ridge Wind",
 
   // Chart
   "chart.peak": "Peak generation",
