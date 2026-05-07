@@ -113,7 +113,7 @@ const EN: Dict = {
     "IMD station data blended with ECMWF forecasts, downscaled to plant coordinates in Karnataka.",
 
   // Footer
-  "footer.copyright": "© 2026 Aether Energy · Karnataka generation forecasting",
+  "footer.copyright": "© 2026 K-Grid Pulse · Karnataka generation forecasting",
   "footer.lastTraining": "Last training: 6h ago · Revision {rev} · Updated {time}",
 
   // Language
