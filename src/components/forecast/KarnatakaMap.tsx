@@ -24,7 +24,7 @@ const DISTRICT_ANCHORS: Record<District, { x: number; y: number }> = {
 // Small offsets so multiple assets in the same district don't fully overlap
 const ASSET_OFFSETS: Record<string { dx: number; dy: number }> = {
   // Pavagada is in the far north of Tumakuru (enclave near Andhra border)
-  "sol-pavagada-01":   { dx: 11,    dy: -17 },
+  "sol-pavagada-01":   { dx: 11,    dy: 17 },
   "sol-kalaburagi-02": { dx: 0,    dy: 0 },
   "sol-koppal-03":     { dx: 0,    dy: 0 },
   "win-chitradurga-01":{ dx: 0,    dy: 0 },
