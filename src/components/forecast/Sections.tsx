@@ -112,55 +112,121 @@ export const ModelsSection = () => {
   );
 };
 
-export const ReportsSection = () => {
-  const { t } = useI18n();
-  const [reports, setReports] = useState(() => {
-    const now = new Date();
+import { useEffect } from "react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { generateForecast, type Horizon } from "@/lib/forecast-data";
+const REPORT_REFRESH_MS = 15 * 60 * 1000; // 15 minutes
+
+function buildReportPdf(reportName: string, horizon: Horizon): Blob {
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const now = new Date();
+
+  // Title
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.text(reportName, 40, 50);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.setTextColor(120);
+  doc.text(
+    `Karnataka Renewable Forecast — generated ${now.toLocaleString()}`,
+    40,
+    68,
+  );
+  doc.text(`Horizon: ${horizon}`, 40, 82);
+
+  // Per-asset summary table
+  const rows = ASSETS.map((a) => {
+    const data = generateForecast(a, horizon, now.getHours(), Math.floor(now.getTime() / REPORT_REFRESH_MS));
+    const predicted = data.reduce((s, p) => s + p.p50, 0);
+    const peak = Math.max(...data.map((p) => p.p50));
+    const band =
+      data.reduce((s, p) => s + (p.p90 - p.p10), 0) / data.length;
     return [
-      { 
-        name: t("section.reports.daily"), 
-        date: now.toISOString().split('T')[0], 
-        size: "1.2 MB",
-        generated: true 
-      },
-      { 
-        name: t("section.reports.weekly"), 
-        date: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], 
-        size: "3.8 MB",
-        generated: true 
-      },
-      { 
-        name: t("section.reports.monthly"), 
-        date: new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0], 
-        size: "9.4 MB",
-        generated: true 
-      },
-      { 
-        name: t("section.reports.accuracy"), 
-        date: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], 
-        size: "2.1 MB",
-        generated: true 
-      },
+      a.name,
+      a.type.toUpperCase(),
+      a.district,
+      `${a.capacity} MW`,
+      `${predicted.toFixed(1)} MWh`,
+      `${peak.toFixed(1)} MW`,
+      `±${band.toFixed(1)} MW`,
     ];
   });
 
-  const handleDownload = (reportName: string) => {
-    toast({ 
-      title: t("section.reports.downloadTitle"), 
-      description: `${t("section.reports.downloading")} ${reportName}...` 
+  autoTable(doc, {
+    startY: 100,
+    head: [["Asset", "Type", "District", "Capacity", "24h Predicted", "Peak", "Avg Band"]],
+    body: rows,
+    styles: { fontSize: 9 },
+    headStyles: { fillColor: [37, 99, 235] },
+  });
+
+  doc.setFontSize(8);
+  doc.setTextColor(150);
+  doc.text(
+    "Auto-regenerated every 15 minutes from the latest forecast snapshot.",
+    40,
+    doc.internal.pageSize.getHeight() - 30,
+  );
+
+  return doc.output("blob");
+}
+
+export const ReportsSection = () => {
+  const { t } = useI18n();
+
+  const buildReports = () => {
+    const now = new Date();
+    return [
+      { name: t("section.reports.daily"),    horizon: "day-ahead" as Horizon, date: now.toISOString().split("T")[0] },
+      { name: t("section.reports.weekly"),   horizon: "intra-day" as Horizon, date: new Date(now.getTime() - 3 * 86400000).toISOString().split("T")[0] },
+      { name: t("section.reports.monthly"),  horizon: "hourly"    as Horizon, date: new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0] },
+      { name: t("section.reports.accuracy"), horizon: "intra-day" as Horizon, date: new Date(now.getTime() - 7 * 86400000).toISOString().split("T")[0] },
+    ];
+  };
+
+  const [reports, setReports] = useState(buildReports);
+  const [generatedAt, setGeneratedAt] = useState(() => new Date());
+
+  // Regenerate report metadata every 15 minutes so the next download is fresh
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setReports(buildReports());
+      setGeneratedAt(new Date());
+    }, REPORT_REFRESH_MS);
+    return () => window.clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleDownload = (reportName: string, horizon: Horizon) => {
+    const blob = buildReportPdf(reportName, horizon);
+    const url = URL.createObjectURL(blob);
+    const filename = `${reportName.replace(/\s+/g, "_")}_${new Date()
+      .toISOString()
+      .replace(/[:.]/g, "-")}.pdf`;
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    toast({
+      title: t("section.reports.completeTitle"),
+      description: `${t("section.reports.downloaded")} ${reportName}`,
     });
-    
-    // Simulate download delay
-    setTimeout(() => {
-      toast({ 
-        title: t("section.reports.completeTitle"), 
-        description: `${t("section.reports.downloaded")} ${reportName}` 
-      });
-    }, 1500);
   };
 
   return (
-    <SectionShell id="reports" title={t("section.reports.title")} subtitle={t("section.reports.subtitle")}>
+    <SectionShell
+      id="reports"
+      title={t("section.reports.title")}
+      subtitle={`${t("section.reports.subtitle")} · refreshed ${generatedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`}
+    >
       <div className="rounded-2xl border border-border bg-card shadow-card divide-y divide-border">
         {reports.map((r) => (
           <div key={r.name} className="flex items-center justify-between p-4">
@@ -171,17 +237,15 @@ export const ReportsSection = () => {
               <div>
                 <div className="font-medium text-sm">{r.name}</div>
                 <div className="text-xs text-muted-foreground">
-                  {r.date} · PDF · {r.size}
-                  {r.generated && (
-                    <span className="ml-2 inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-success/10 text-success border border-success/20">
-                      <CheckCircle2 className="h-3 w-3" /> Auto-generated
-                    </span>
-                  )}
+                  {r.date} · PDF · {r.horizon}
+                  <span className="ml-2 inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-success/10 text-success border border-success/20">
+                    <CheckCircle2 className="h-3 w-3" /> Auto-generated
+                  </span>
                 </div>
               </div>
             </div>
             <button
-              onClick={() => handleDownload(r.name)}
+              onClick={() => handleDownload(r.name, r.horizon)}
               className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-border hover:bg-secondary transition-colors"
             >
               <Download className="h-3.5 w-3.5" /> {t("section.reports.download")}
@@ -195,6 +259,7 @@ export const ReportsSection = () => {
     </SectionShell>
   );
 };
+
 
 export const SettingsSection = () => {
   const { t, lang, setLang } = useI18n();
