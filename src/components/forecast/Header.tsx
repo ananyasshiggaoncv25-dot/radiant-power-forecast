@@ -1,8 +1,7 @@
-import { useState } from "react";
-import { Zap } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Zap, Activity } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { LanguageToggle } from "./LanguageToggle";
-import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -17,18 +16,32 @@ export const Header = () => {
   const { t } = useI18n();
   const [active, setActive] = useState<string>("dashboard");
 
-  const handleClick = (e: React.MouseEvent, id: string, label: string) => {
+  const handleClick = (e: React.MouseEvent, id: string) => {
     e.preventDefault();
     setActive(id);
     if (id === "dashboard") {
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
-    toast({
-      title: t("nav.comingSoon"),
-      description: t("nav.comingSoonDesc", { section: label }),
-    });
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  // Track active section on scroll
+  useEffect(() => {
+    const ids = NAV.map((n) => n.id).filter((i) => i !== "dashboard");
+    const onScroll = () => {
+      if (window.scrollY < 200) { setActive("dashboard"); return; }
+      let current = "dashboard";
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= 120) current = id;
+      }
+      setActive(current);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <header className="border-b border-border bg-card/60 backdrop-blur-md sticky top-0 z-30">
@@ -48,8 +61,8 @@ export const Header = () => {
             return (
               <a
                 key={key}
-                href="#"
-                onClick={(e) => handleClick(e, id, label)}
+                href={`#${id}`}
+                onClick={(e) => handleClick(e, id)}
                 className={cn(
                   "px-3 py-1.5 rounded-lg transition-colors",
                   active === id
@@ -71,8 +84,11 @@ export const Header = () => {
             </span>
             <span className="text-success font-medium">{t("header.modelsLive")}</span>
           </div>
-          <div className="h-9 w-9 rounded-full bg-gradient-hero text-primary-foreground text-xs font-semibold flex items-center justify-center">
-            AE
+          <div
+            aria-label="K-Grid Pulse"
+            className="h-9 w-9 rounded-full bg-gradient-hero text-primary-foreground flex items-center justify-center shadow-glow ring-1 ring-primary/30"
+          >
+            <Activity className="h-4 w-4" strokeWidth={2.75} />
           </div>
         </div>
       </div>
