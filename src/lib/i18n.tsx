@@ -114,6 +114,52 @@ const EN: Dict = {
 
   // Footer
   "footer.copyright": "© 2026 K-Grid Pulse · Karnataka generation forecasting",
+
+  // Sections — Assets
+  "section.assets.title": "Assets registry",
+  "section.assets.subtitle": "All Karnataka plants connected to the K-Grid Pulse forecasting engine.",
+  "section.assets.online": "Online",
+  "section.assets.capacity": "Capacity",
+  "section.assets.cluster": "Cluster",
+
+  // Sections — Models
+  "section.models.title": "Forecasting models",
+  "section.models.subtitle": "Quantile regressors and ensembles powering each prediction horizon.",
+  "section.models.solar": "Solar generation forecast",
+  "section.models.wind": "Wind generation forecast",
+  "section.models.weather": "Weather feature blend",
+  "section.models.uncertainty": "Uncertainty attribution",
+  "section.models.deployed": "Deployed",
+  "section.models.arch": "Architecture",
+  "section.models.lastTrain": "Last train",
+  "section.models.upload": "Upload your own model artifacts (.pkl, .onnx, .pt) to register a new pipeline.",
+
+  // Sections — Reports
+  "section.reports.title": "Reports & exports",
+  "section.reports.subtitle": "Auto-generated PDF summaries from each forecast cycle.",
+  "section.reports.daily": "Daily forecast brief",
+  "section.reports.weekly": "Weekly accuracy review",
+  "section.reports.monthly": "Monthly portfolio summary",
+  "section.reports.accuracy": "Model accuracy audit",
+  "section.reports.download": "Download",
+  "section.reports.upload": "Drop PDF reports into this section to make them downloadable here.",
+  "section.reports.pendingTitle": "Report not yet attached",
+  "section.reports.pendingDesc": "Upload the PDF and it will appear here for download.",
+
+  // Sections — Settings
+  "section.settings.title": "Settings",
+  "section.settings.subtitle": "Personalise the K-Grid Pulse experience.",
+  "section.settings.language": "Language",
+  "section.settings.languageDesc": "Switch the interface between English and Kannada.",
+  "section.settings.units": "Power units",
+  "section.settings.unitsDesc": "Display generation in megawatts or kilowatts.",
+  "section.settings.autoRefresh": "Auto-refresh forecasts",
+  "section.settings.autoRefreshDesc": "Pull a fresh forecast every 15 minutes.",
+  "section.settings.alerts": "Threshold alerts",
+  "section.settings.alertsDesc": "Notify when forecast accuracy drops below 90%.",
+  "section.settings.contrast": "High-contrast mode",
+  "section.settings.contrastDesc": "Improves legibility on bright control-room displays.",
+
   "footer.lastTraining": "Last training: 6h ago · Revision {rev} · Updated {time}",
 
   // Language
@@ -219,7 +265,53 @@ const KN: Dict = {
   "weather.footer":
     "IMD ಸ್ಟೇಷನ್ ದತ್ತಾಂಶವನ್ನು ECMWF ಮುನ್ಸೂಚನೆಗಳೊಂದಿಗೆ ಮಿಶ್ರಗೊಳಿಸಿ, ಕರ್ನಾಟಕದ ಸ್ಥಾವರ ನಿರ್ದೇಶಾಂಕಗಳಿಗೆ ಡೌನ್‌ಸ್ಕೇಲ್ ಮಾಡಲಾಗಿದೆ.",
 
-  "footer.copyright": "© 2026 ಏಥರ್ ಎನರ್ಜಿ · ಕರ್ನಾಟಕ ಉತ್ಪಾದನೆ ಮುನ್ಸೂಚನೆ",
+  "footer.copyright": "© 2026 ಕೆ-ಗ್ರಿಡ್ ಪಲ್ಸ್ · ಕರ್ನಾಟಕ ಉತ್ಪಾದನೆ ಮುನ್ಸೂಚನೆ",
+
+  // Sections — Assets
+  "section.assets.title": "ಆಸ್ತಿಗಳ ನೋಂದಣಿ",
+  "section.assets.subtitle": "ಕೆ-ಗ್ರಿಡ್ ಪಲ್ಸ್ ಮುನ್ಸೂಚನಾ ಎಂಜಿನ್‌ಗೆ ಸಂಪರ್ಕಿತ ಎಲ್ಲಾ ಕರ್ನಾಟಕ ಸ್ಥಾವರಗಳು.",
+  "section.assets.online": "ಆನ್‌ಲೈನ್",
+  "section.assets.capacity": "ಸಾಮರ್ಥ್ಯ",
+  "section.assets.cluster": "ಸಮೂಹ",
+
+  // Sections — Models
+  "section.models.title": "ಮುನ್ಸೂಚನಾ ಮಾದರಿಗಳು",
+  "section.models.subtitle": "ಪ್ರತಿ ಮುನ್ಸೂಚನಾ ಹಾರಿಜಾನ್‌ಗೆ ಶಕ್ತಿ ನೀಡುವ ಕ್ವಾಂಟೈಲ್ ಮತ್ತು ಎನ್‌ಸೆಂಬಲ್ ಮಾದರಿಗಳು.",
+  "section.models.solar": "ಸೌರ ಉತ್ಪಾದನೆ ಮುನ್ಸೂಚನೆ",
+  "section.models.wind": "ಪವನ ಉತ್ಪಾದನೆ ಮುನ್ಸೂಚನೆ",
+  "section.models.weather": "ಹವಾಮಾನ ವೈಶಿಷ್ಟ್ಯ ಮಿಶ್ರಣ",
+  "section.models.uncertainty": "ಅನಿಶ್ಚಿತತೆ ಆರೋಪಣೆ",
+  "section.models.deployed": "ನಿಯೋಜಿತ",
+  "section.models.arch": "ವಾಸ್ತುಶಿಲ್ಪ",
+  "section.models.lastTrain": "ಕೊನೆಯ ತರಬೇತಿ",
+  "section.models.upload": "ಹೊಸ ಪೈಪ್‌ಲೈನ್ ನೋಂದಾಯಿಸಲು ನಿಮ್ಮ ಸ್ವಂತ ಮಾದರಿ ಫೈಲ್‌ಗಳನ್ನು (.pkl, .onnx, .pt) ಅಪ್‌ಲೋಡ್ ಮಾಡಿ.",
+
+  // Sections — Reports
+  "section.reports.title": "ವರದಿಗಳು ಮತ್ತು ರಫ್ತುಗಳು",
+  "section.reports.subtitle": "ಪ್ರತಿ ಮುನ್ಸೂಚನಾ ಚಕ್ರದಿಂದ ಸ್ವಯಂ-ರಚಿತ PDF ಸಾರಾಂಶಗಳು.",
+  "section.reports.daily": "ದೈನಂದಿನ ಮುನ್ಸೂಚನೆ ಸಂಕ್ಷೇಪ",
+  "section.reports.weekly": "ಸಾಪ್ತಾಹಿಕ ನಿಖರತೆ ವಿಮರ್ಶೆ",
+  "section.reports.monthly": "ಮಾಸಿಕ ಪೋರ್ಟ್‌ಫೋಲಿಯೋ ಸಾರಾಂಶ",
+  "section.reports.accuracy": "ಮಾದರಿ ನಿಖರತೆ ಲೆಕ್ಕಪರಿಶೋಧನೆ",
+  "section.reports.download": "ಡೌನ್‌ಲೋಡ್",
+  "section.reports.upload": "PDF ವರದಿಗಳನ್ನು ಇಲ್ಲಿ ಡೌನ್‌ಲೋಡ್‌ಗೆ ಲಭ್ಯವಾಗಿಸಲು ಈ ವಿಭಾಗಕ್ಕೆ ಸೇರಿಸಿ.",
+  "section.reports.pendingTitle": "ವರದಿ ಇನ್ನೂ ಲಗತ್ತಿಸಿಲ್ಲ",
+  "section.reports.pendingDesc": "PDF ಅಪ್‌ಲೋಡ್ ಮಾಡಿ ಮತ್ತು ಅದು ಡೌನ್‌ಲೋಡ್‌ಗಾಗಿ ಇಲ್ಲಿ ಕಾಣಿಸಿಕೊಳ್ಳುತ್ತದೆ.",
+
+  // Sections — Settings
+  "section.settings.title": "ಸಂಯೋಜನೆಗಳು",
+  "section.settings.subtitle": "ಕೆ-ಗ್ರಿಡ್ ಪಲ್ಸ್ ಅನುಭವವನ್ನು ವೈಯಕ್ತೀಕರಿಸಿ.",
+  "section.settings.language": "ಭಾಷೆ",
+  "section.settings.languageDesc": "ಇಂಟರ್ಫೇಸ್ ಅನ್ನು ಇಂಗ್ಲಿಷ್ ಮತ್ತು ಕನ್ನಡ ನಡುವೆ ಬದಲಿಸಿ.",
+  "section.settings.units": "ಶಕ್ತಿ ಘಟಕಗಳು",
+  "section.settings.unitsDesc": "ಉತ್ಪಾದನೆಯನ್ನು ಮೆಗಾವಾಟ್ ಅಥವಾ ಕಿಲೋವಾಟ್‌ನಲ್ಲಿ ಪ್ರದರ್ಶಿಸಿ.",
+  "section.settings.autoRefresh": "ಸ್ವಯಂ-ಮರುಲೋಡ್ ಮುನ್ಸೂಚನೆಗಳು",
+  "section.settings.autoRefreshDesc": "ಪ್ರತಿ 15 ನಿಮಿಷಕ್ಕೆ ತಾಜಾ ಮುನ್ಸೂಚನೆ ಪಡೆಯಿರಿ.",
+  "section.settings.alerts": "ಮಿತಿ ಎಚ್ಚರಿಕೆಗಳು",
+  "section.settings.alertsDesc": "ಮುನ್ಸೂಚನೆ ನಿಖರತೆ 90% ಕೆಳಗೆ ಬಿದ್ದಾಗ ಸೂಚಿಸಿ.",
+  "section.settings.contrast": "ಹೆಚ್ಚಿನ-ವ್ಯತಿರಿಕ್ತ ಮೋಡ್",
+  "section.settings.contrastDesc": "ಪ್ರಕಾಶಮಾನ ನಿಯಂತ್ರಣ-ಕೋಣೆ ಪ್ರದರ್ಶನಗಳಲ್ಲಿ ಓದುವಿಕೆಯನ್ನು ಸುಧಾರಿಸುತ್ತದೆ.",
+
   "footer.lastTraining": "ಕೊನೆಯ ತರಬೇತಿ: 6ಗಂ ಹಿಂದೆ · ಆವೃತ್ತಿ {rev} · ನವೀಕರಿಸಲಾಗಿದೆ {time}",
 
   "lang.label": "ಭಾಷೆ",

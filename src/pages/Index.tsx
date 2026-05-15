@@ -10,6 +10,7 @@ import { KarnatakaMap } from "@/components/forecast/KarnatakaMap";
 import { DistrictFilter } from "@/components/forecast/DistrictFilter";
 import { RefreshControl } from "@/components/forecast/RefreshControl";
 import { UncertaintyBreakdown } from "@/components/forecast/UncertaintyBreakdown";
+import { AssetsSection, ModelsSection, ReportsSection, SettingsSection } from "@/components/forecast/Sections";
 import {
   ASSETS,
   AssetType,
@@ -307,6 +308,11 @@ const Index = () => {
             <WeatherPanel asset={asset} />
           </div>
         </section>
+
+        <AssetsSection />
+        <ModelsSection />
+        <ReportsSection />
+        <SettingsSection />
 
         <footer className="mt-16 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           <div>{t("footer.copyright")}</div>
