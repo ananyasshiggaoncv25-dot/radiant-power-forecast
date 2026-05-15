@@ -309,6 +309,11 @@ const Index = () => {
           </div>
         </section>
 
+        <AssetsSection />
+        <ModelsSection />
+        <ReportsSection />
+        <SettingsSection />
+
         <footer className="mt-16 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           <div>{t("footer.copyright")}</div>
           <div className="flex items-center gap-4">
