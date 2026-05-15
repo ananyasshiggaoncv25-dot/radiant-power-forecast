@@ -114,6 +114,52 @@ const EN: Dict = {
 
   // Footer
   "footer.copyright": "© 2026 K-Grid Pulse · Karnataka generation forecasting",
+
+  // Sections — Assets
+  "section.assets.title": "Assets registry",
+  "section.assets.subtitle": "All Karnataka plants connected to the K-Grid Pulse forecasting engine.",
+  "section.assets.online": "Online",
+  "section.assets.capacity": "Capacity",
+  "section.assets.cluster": "Cluster",
+
+  // Sections — Models
+  "section.models.title": "Forecasting models",
+  "section.models.subtitle": "Quantile regressors and ensembles powering each prediction horizon.",
+  "section.models.solar": "Solar generation forecast",
+  "section.models.wind": "Wind generation forecast",
+  "section.models.weather": "Weather feature blend",
+  "section.models.uncertainty": "Uncertainty attribution",
+  "section.models.deployed": "Deployed",
+  "section.models.arch": "Architecture",
+  "section.models.lastTrain": "Last train",
+  "section.models.upload": "Upload your own model artifacts (.pkl, .onnx, .pt) to register a new pipeline.",
+
+  // Sections — Reports
+  "section.reports.title": "Reports & exports",
+  "section.reports.subtitle": "Auto-generated PDF summaries from each forecast cycle.",
+  "section.reports.daily": "Daily forecast brief",
+  "section.reports.weekly": "Weekly accuracy review",
+  "section.reports.monthly": "Monthly portfolio summary",
+  "section.reports.accuracy": "Model accuracy audit",
+  "section.reports.download": "Download",
+  "section.reports.upload": "Drop PDF reports into this section to make them downloadable here.",
+  "section.reports.pendingTitle": "Report not yet attached",
+  "section.reports.pendingDesc": "Upload the PDF and it will appear here for download.",
+
+  // Sections — Settings
+  "section.settings.title": "Settings",
+  "section.settings.subtitle": "Personalise the K-Grid Pulse experience.",
+  "section.settings.language": "Language",
+  "section.settings.languageDesc": "Switch the interface between English and Kannada.",
+  "section.settings.units": "Power units",
+  "section.settings.unitsDesc": "Display generation in megawatts or kilowatts.",
+  "section.settings.autoRefresh": "Auto-refresh forecasts",
+  "section.settings.autoRefreshDesc": "Pull a fresh forecast every 15 minutes.",
+  "section.settings.alerts": "Threshold alerts",
+  "section.settings.alertsDesc": "Notify when forecast accuracy drops below 90%.",
+  "section.settings.contrast": "High-contrast mode",
+  "section.settings.contrastDesc": "Improves legibility on bright control-room displays.",
+
   "footer.lastTraining": "Last training: 6h ago · Revision {rev} · Updated {time}",
 
   // Language
