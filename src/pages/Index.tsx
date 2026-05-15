@@ -10,6 +10,7 @@ import { KarnatakaMap } from "@/components/forecast/KarnatakaMap";
 import { DistrictFilter } from "@/components/forecast/DistrictFilter";
 import { RefreshControl } from "@/components/forecast/RefreshControl";
 import { UncertaintyBreakdown } from "@/components/forecast/UncertaintyBreakdown";
+import { AssetsSection, ModelsSection, ReportsSection, SettingsSection } from "@/components/forecast/Sections";
 import {
   ASSETS,
   AssetType,
