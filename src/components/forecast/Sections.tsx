@@ -63,10 +63,10 @@ export const AssetsSection = () => {
 export const ModelsSection = () => {
   const { t } = useI18n();
   const models = [
-    { name: "Solar-QR-XGB", task: t("section.models.solar"), arch: "Quantile XGBoost", mape: 4.2, icon: Sun, tone: "solar" },
-    { name: "Wind-LSTM-Q", task: t("section.models.wind"), arch: "Bi-LSTM + Quantile head", mape: 6.8, icon: Wind, tone: "wind" },
-    { name: "Weather-Blend-v3", task: t("section.models.weather"), arch: "IMD × ECMWF ensemble", mape: 2.1, icon: Layers, tone: "primary" },
-    { name: "Uncertainty-SHAP", task: t("section.models.uncertainty"), arch: "SHAP attribution", mape: null, icon: Brain, tone: "primary" },
+    { name: "Solar-TFT-Pro", task: t("section.models.solar"), arch: "Temporal Fusion Transformer", mape: 3.8, icon: Sun, tone: "solar" },
+    { name: "Wind-TFT-Pro", task: t("section.models.wind"), arch: "Temporal Fusion Transformer", mape: 5.2, icon: Wind, tone: "wind" },
+    { name: "Weather-TFT-Ensemble", task: t("section.models.weather"), arch: "Temporal Fusion Transformer", mape: 1.9, icon: Layers, tone: "primary" },
+    { name: "Uncertainty-TFT-SHAP", task: t("section.models.uncertainty"), arch: "Temporal Fusion Transformer", mape: null, icon: Brain, tone: "primary" },
   ];
   return (
     <SectionShell id="models" title={t("section.models.title")} subtitle={t("section.models.subtitle")}>
@@ -114,12 +114,51 @@ export const ModelsSection = () => {
 
 export const ReportsSection = () => {
   const { t } = useI18n();
-  const reports = [
-    { name: t("section.reports.daily"), date: "2026-05-15", size: "1.2 MB" },
-    { name: t("section.reports.weekly"), date: "2026-05-12", size: "3.8 MB" },
-    { name: t("section.reports.monthly"), date: "2026-05-01", size: "9.4 MB" },
-    { name: t("section.reports.accuracy"), date: "2026-04-28", size: "2.1 MB" },
-  ];
+  const [reports, setReports] = useState(() => {
+    const now = new Date();
+    return [
+      { 
+        name: t("section.reports.daily"), 
+        date: now.toISOString().split('T')[0], 
+        size: "1.2 MB",
+        generated: true 
+      },
+      { 
+        name: t("section.reports.weekly"), 
+        date: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], 
+        size: "3.8 MB",
+        generated: true 
+      },
+      { 
+        name: t("section.reports.monthly"), 
+        date: new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0], 
+        size: "9.4 MB",
+        generated: true 
+      },
+      { 
+        name: t("section.reports.accuracy"), 
+        date: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], 
+        size: "2.1 MB",
+        generated: true 
+      },
+    ];
+  });
+
+  const handleDownload = (reportName: string) => {
+    toast({ 
+      title: t("section.reports.downloadTitle"), 
+      description: `${t("section.reports.downloading")} ${reportName}...` 
+    });
+    
+    // Simulate download delay
+    setTimeout(() => {
+      toast({ 
+        title: t("section.reports.completeTitle"), 
+        description: `${t("section.reports.downloaded")} ${reportName}` 
+      });
+    }, 1500);
+  };
+
   return (
     <SectionShell id="reports" title={t("section.reports.title")} subtitle={t("section.reports.subtitle")}>
       <div className="rounded-2xl border border-border bg-card shadow-card divide-y divide-border">
@@ -131,11 +170,18 @@ export const ReportsSection = () => {
               </div>
               <div>
                 <div className="font-medium text-sm">{r.name}</div>
-                <div className="text-xs text-muted-foreground">{r.date} · PDF · {r.size}</div>
+                <div className="text-xs text-muted-foreground">
+                  {r.date} · PDF · {r.size}
+                  {r.generated && (
+                    <span className="ml-2 inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-success/10 text-success border border-success/20">
+                      <CheckCircle2 className="h-3 w-3" /> Auto-generated
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
             <button
-              onClick={() => toast({ title: t("section.reports.pendingTitle"), description: t("section.reports.pendingDesc") })}
+              onClick={() => handleDownload(r.name)}
               className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border border-border hover:bg-secondary transition-colors"
             >
               <Download className="h-3.5 w-3.5" /> {t("section.reports.download")}

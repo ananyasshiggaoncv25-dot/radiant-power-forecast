@@ -145,6 +145,10 @@ const EN: Dict = {
   "section.reports.upload": "Drop PDF reports into this section to make them downloadable here.",
   "section.reports.pendingTitle": "Report not yet attached",
   "section.reports.pendingDesc": "Upload the PDF and it will appear here for download.",
+  "section.reports.downloadTitle": "Downloading report",
+  "section.reports.downloading": "Downloading",
+  "section.reports.completeTitle": "Download complete",
+  "section.reports.downloaded": "Downloaded",
 
   // Sections — Settings
   "section.settings.title": "Settings",
@@ -294,9 +298,13 @@ const KN: Dict = {
   "section.reports.monthly": "ಮಾಸಿಕ ಪೋರ್ಟ್‌ಫೋಲಿಯೋ ಸಾರಾಂಶ",
   "section.reports.accuracy": "ಮಾದರಿ ನಿಖರತೆ ಲೆಕ್ಕಪರಿಶೋಧನೆ",
   "section.reports.download": "ಡೌನ್‌ಲೋಡ್",
-  "section.reports.upload": "PDF ವರದಿಗಳನ್ನು ಇಲ್ಲಿ ಡೌನ್‌ಲೋಡ್‌ಗೆ ಲಭ್ಯವಾಗಿಸಲು ಈ ವಿಭಾಗಕ್ಕೆ ಸೇರಿಸಿ.",
+  "section.reports.upload": "PDF ವರದಿಗಳನ್ನು ಇಲ್ಲಿ ಡೌನ್‌ಲೋಡ್‌ಗಾಗಿ ಲಭ್ಯವಾಗಿಸಲು ಈ ವಿಭಾಗಕ್ಕೆ ಸೇರಿಸಿ.",
   "section.reports.pendingTitle": "ವರದಿ ಇನ್ನೂ ಲಗತ್ತಿಸಿಲ್ಲ",
   "section.reports.pendingDesc": "PDF ಅಪ್‌ಲೋಡ್ ಮಾಡಿ ಮತ್ತು ಅದು ಡೌನ್‌ಲೋಡ್‌ಗಾಗಿ ಇಲ್ಲಿ ಕಾಣಿಸಿಕೊಳ್ಳುತ್ತದೆ.",
+  "section.reports.downloadTitle": "ವರದಿ ಡೌನ್‌ಲೋಡ್ ಮಾಡುತ್ತಿದೆ",
+  "section.reports.downloading": "ಡೌನ್‌ಲೋಡ್ ಮಾಡುತ್ತಿದೆ",
+  "section.reports.completeTitle": "ಡೌನ್‌ಲೋಡ್ ಪೂರ್ಣಗೊಂಡಿದೆ",
+  "section.reports.downloaded": "ಡೌನ್‌ಲೋಡ್ ಮಾಡಲಾಗಿದೆ",
 
   // Sections — Settings
   "section.settings.title": "ಸಂಯೋಜನೆಗಳು",

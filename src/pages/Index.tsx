@@ -18,10 +18,15 @@ import {
   District,
   Horizon,
   computeStats,
-  generateForecast,
 } from "@/lib/forecast-data";
 import { useI18n } from "@/lib/i18n";
 import { toast } from "@/hooks/use-toast";
+import { 
+  initializeBuffer, 
+  addDataPoint, 
+  bufferToForecastPoints, 
+  type DataBuffer 
+} from "@/lib/real-data";
 
 const REFRESH_INTERVAL_MS = 15 * 60 * 1000; // 15 minutes
 const TICK_MS = 1000;
@@ -37,6 +42,11 @@ const Index = () => {
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(() => new Date());
   const [nextInMs, setNextInMs] = useState(REFRESH_INTERVAL_MS);
+  
+  // Data buffer for sliding window effect
+  const [dataBuffer, setDataBuffer] = useState<DataBuffer>(() => 
+    initializeBuffer(ASSETS[0], "intra-day", 48)
+  );
 
   // District counts for the chip filter
   const districtCounts = useMemo(() => {
@@ -66,18 +76,23 @@ const Index = () => {
     [selectedId]
   );
 
-  // Forecast for the current revision + previous revision (for delta highlighting)
+  // Reinitialize buffer when asset or horizon changes
+  useEffect(() => {
+    setDataBuffer(initializeBuffer(asset, horizon, 48));
+  }, [asset, horizon]);
+
+  // Convert buffer to forecast points for the chart
   const data = useMemo(
-    () => generateForecast(asset, horizon, 14, revision),
-    [asset, horizon, revision]
+    () => bufferToForecastPoints(dataBuffer),
+    [dataBuffer]
   );
-  const prevData = useMemo(
-    () =>
-      revision === 0
-        ? data
-        : generateForecast(asset, horizon, 14, revision - 1),
-    [asset, horizon, revision, data]
-  );
+  
+  // Previous data for delta highlighting (use last 24 points from buffer)
+  const prevData = useMemo(() => {
+    if (dataBuffer.data.length < 24) return data;
+    const prevPoints = dataBuffer.data.slice(-24);
+    return bufferToForecastPoints({ data: prevPoints, maxPoints: 24 });
+  }, [dataBuffer, data]);
 
   const stats = useMemo(() => computeStats(data, asset.capacity), [data, asset]);
   const prevStats = useMemo(
@@ -96,21 +111,76 @@ const Index = () => {
   const scopeStats = useMemo(() => {
     const totalCap = visibleAssets.reduce((s, a) => s + a.capacity, 0);
     const totalPredicted = visibleAssets.reduce((s, a) => {
-      const d = generateForecast(a, horizon, 14, revision);
+      const buffer = initializeBuffer(a, horizon, 24);
+      const d = bufferToForecastPoints(buffer);
       return s + d.reduce((ss, p) => ss + p.p50, 0);
     }, 0);
     return { totalCap, totalPredicted };
-  }, [visibleAssets, horizon, revision]);
+  }, [visibleAssets, horizon]);
 
   // ---- Auto-refresh loop ----
   const triggerRefresh = (silent = false) => {
+    // Add new data point instead of regenerating everything
+    const now = new Date();
+    const newHour = now.getHours();
+    const newPoint = {
+      timestamp: now,
+      hour: newHour,
+      p10: 0,
+      p50: 0,
+      p90: 0,
+      actual: 0,
+      weather: 0,
+    };
+    
+    // Generate realistic new point
+    const { type, capacity, lat } = asset;
+    const widthFactor = horizon === "day-ahead" ? 0.22 : horizon === "intra-day" ? 0.13 : 0.07;
+    let base = 0;
+    let weather = 0;
+    
+    const seed = now.getTime() % 10000;
+    const rand = () => {
+      const x = Math.sin(seed) * 10000;
+      return (x - Math.floor(x));
+    };
+    
+    if (type === "solar") {
+      const solarNoon = 12;
+      const x = (newHour - solarNoon) / 4.5;
+      const baseCurve = Math.max(0, Math.exp(-x * x));
+      const month = now.getMonth();
+      const seasonalFactor = 0.85 + 0.3 * Math.sin((month / 12) * Math.PI * 2 - Math.PI / 2);
+      const cloudCover = 0.7 + rand() * 0.3;
+      base = baseCurve * capacity * 0.82 * seasonalFactor * cloudCover;
+      weather = Math.max(0, baseCurve * 1000 * cloudCover + (rand() - 0.5) * 100);
+    } else {
+      const diurnal = 0.5 + 0.4 * Math.sin((newHour / 24) * Math.PI * 2 - Math.PI / 4);
+      const turbulence = 1 + (rand() - 0.5) * 0.3;
+      base = Math.max(0, capacity * diurnal * 0.65 * turbulence);
+      weather = 3 + diurnal * 10 * turbulence + (rand() - 0.5) * 3;
+    }
+    
+    const noise = (rand() - 0.5) * capacity * 0.03;
+    const p50 = Math.max(0, base + noise);
+    const width = p50 * widthFactor + capacity * 0.015;
+    const round = (n: number): number => Math.round(n * 10) / 10;
+    
+    newPoint.p10 = round(Math.max(0, p50 - width));
+    newPoint.p50 = round(p50);
+    newPoint.p90 = round(Math.min(capacity, p50 + width));
+    newPoint.actual = round(Math.max(0, p50 + (rand() - 0.5) * width * 0.6));
+    newPoint.weather = round(weather);
+    
+    setDataBuffer(prev => addDataPoint(prev, newPoint));
     setRevision((r) => r + 1);
-    setLastUpdated(new Date());
+    setLastUpdated(now);
     setNextInMs(REFRESH_INTERVAL_MS);
+    
     if (!silent) {
       toast({
         title: t("refresh.toastTitle"),
-        description: `${t("refresh.updated")} ${new Date().toLocaleTimeString([], {
+        description: `${t("refresh.updated")} ${now.toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         })}`,
