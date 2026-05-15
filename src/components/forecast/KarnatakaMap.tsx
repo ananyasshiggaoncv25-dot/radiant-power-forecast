@@ -18,7 +18,7 @@ const DISTRICT_ANCHORS: Record<District, { x: number; y: number }> = {
   Gadag:       { x: 41, y: 45 },
   Ballari:     { x: 61, y: 46 },
   Chitradurga: { x: 55, y: 58 },
-  Tumakuru:    { x: 58, y: 71 },
+  Tumakuru:    { x: 58, y: 77 },
 };
 
 // Small offsets so multiple assets in the same district don't fully overlap
