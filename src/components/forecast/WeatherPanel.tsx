@@ -10,7 +10,7 @@ export const WeatherPanel = ({ asset }: Props) => {
   const { t } = useI18n();
   // Deterministic mock based on asset
   const seed = asset.lat + asset.lng;
-  const temp = Math.round(15 + Math.sin(seed) * 10);
+  const temp = Math.round(30 + Math.sin(seed) * 10);
   const wind = Math.round(6 + Math.abs(Math.cos(seed)) * 10);
   const cloud = Math.round(20 + Math.abs(Math.sin(seed * 1.3)) * 60);
   const humidity = Math.round(40 + Math.abs(Math.cos(seed * 0.7)) * 35);
