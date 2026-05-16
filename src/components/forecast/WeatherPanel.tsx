@@ -17,7 +17,7 @@ export const WeatherPanel = ({ asset }: Props) => {
   const irradiance = Math.round(420 + Math.abs(Math.sin(seed * 2)) * 480);
 
   const items = [
-    { icon: Thermometer, label: t("weather.temperature"), value: `${temp}°F` },
+    { icon: Thermometer, label: t("weather.temperature"), value: `${temp}°C` },
     { icon: WindIcon, label: t("weather.windSpeed"), value: `${wind} m/s` },
     { icon: Cloud, label: t("weather.cloudCover"), value: `${cloud}%` },
     { icon: Droplets, label: t("weather.humidity"), value: `${humidity}%` },
